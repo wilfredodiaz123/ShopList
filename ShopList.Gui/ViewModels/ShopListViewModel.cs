@@ -1,58 +1,59 @@
-﻿using ShopList.Gui.Models;
-using System;
-using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using ShopList.Gui.Models;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+
+
 
 namespace ShopList.Gui.ViewModels
 {
-    public class ShopListViewModel : INotifyPropertyChanged
+
+    public partial class ShopListViewModel :  ObservableObject
     {
+        [ObservableProperty]
         private string _nombreDelArticulo = string.Empty;
+        [ObservableProperty]
         private int _cantidadAComprar = 1;
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        //public event PropertyChangedEventHandler? PropertyChanged;
 
         public ObservableCollection <Item> Items { get;}
 
-        public string NombreDelArticulo
-        { 
-            get => _nombreDelArticulo;
-            set
-            {
-                if (_nombreDelArticulo != value)
-                {
-                    _nombreDelArticulo = value;
-                    OnPropertyChanged(nameof(NombreDelArticulo));
+       // public string NombreDelArticulo
+       // { 
+       //     get => _nombreDelArticulo;
+       //     set
+       //     {
+       //         if (_nombreDelArticulo != value)
+       //         {
+       //             _nombreDelArticulo = value;
+       //             OnPropertyChanged(nameof(NombreDelArticulo));
 
-                }
-            }
-        }
-        public int CantidadDeComprar
-        {
-            get => _cantidadAComprar;
-            set
-            {
-                if (_cantidadAComprar != value)
-                {
-                    _cantidadAComprar = value;
-                    OnPropertyChanged(nameof(CantidadDeComprar));
-                }
-            }
-        }
+       //         }
+       //     }
+       // }
+       // public int CantidadDeComprar
+       // {
+       //     get => _cantidadAComprar;
+       //     set
+       //     {
+       //         if (_cantidadAComprar != value)
+       //         {
+       //             _cantidadAComprar = value;
+       //             OnPropertyChanged(nameof(CantidadDeComprar));
+       //         }
+       //     }
+       // }
 
-       public ICommand AgregarShopListItemCommand { get; private set; }
+       //public ICommand AgregarShopListItemCommand { get; private set; }
 
         public ShopListViewModel()
         {
             Items = new ObservableCollection<Item>();
             CargarDatos();
-            AgregarShopListItemCommand = new Command(AgregarShopListItems);
+            //AgregarShopListItemCommand = new Command(AgregarShopListItems);
         }
+        [RelayCommand]
         public void AgregarShopListItems()
         {
             if (string.IsNullOrEmpty(NombreDelArticulo)|| CantidadDeComprar <= 0)
@@ -71,6 +72,7 @@ namespace ShopList.Gui.ViewModels
             NombreDelArticulo = string.Empty;
             CantidadDeComprar = 1;
         }
+        [RelayCommand]
         public void EliminarShopListItem()
         {
 
@@ -103,10 +105,10 @@ namespace ShopList.Gui.ViewModels
 
             });
         }
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke
-                (this, new PropertyChangedEventArgs(propertyName));
-        }
+        //private void OnPropertyChanged(string propertyName)
+        //{
+        //    PropertyChanged?.Invoke
+        //        (this, new PropertyChangedEventArgs(propertyName));
+        //}
     }
 }
