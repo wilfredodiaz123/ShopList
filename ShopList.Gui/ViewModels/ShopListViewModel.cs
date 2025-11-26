@@ -14,6 +14,8 @@ namespace ShopList.Gui.ViewModels
         private string _nombreDelArticulo = string.Empty;
         [ObservableProperty]
         private int _cantidadAComprar = 1;
+        [ObservableProperty]
+        private Item? _itemSelecionado = null;
 
         //public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -56,7 +58,7 @@ namespace ShopList.Gui.ViewModels
         [RelayCommand]
         public void AgregarShopListItems()
         {
-            if (string.IsNullOrEmpty(NombreDelArticulo)|| CantidadDeComprar <= 0)
+            if (string.IsNullOrEmpty(NombreDelArticulo)|| CantidadAComprar <= 0)
             {
                 return;
             }
@@ -65,17 +67,23 @@ namespace ShopList.Gui.ViewModels
             {
                 Id = generador.Next(),
                 Nombre = NombreDelArticulo,
-                Cantidad = CantidadDeComprar,
+                Cantidad = CantidadAComprar,
                 Comprado = false,
             };
             Items.Add(item);
             NombreDelArticulo = string.Empty;
-            CantidadDeComprar = 1;
+            CantidadAComprar = 1;
         }
+
         [RelayCommand]
         public void EliminarShopListItem()
         {
-
+        
+            if (ItemSelecionado != null && Items.Contains(ItemSelecionado))
+            {
+                Items.Remove(ItemSelecionado);
+                ItemSelecionado = null;
+            }
         }
 
         private void CargarDatos()
