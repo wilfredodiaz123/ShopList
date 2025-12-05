@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ShopList.Gui.Models;
+using ShopList.Gui.Persistence;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 
 
@@ -18,8 +20,9 @@ namespace ShopList.Gui.ViewModels
         private Item? _itemSelecionado = null;
 
         //public event PropertyChangedEventHandler? PropertyChanged;
-
-        public ObservableCollection <Item> Items { get;}
+        [ObservableProperty]
+        private ObservableCollection<Item> _items = null;
+        private ShopListDatabase? _database = null;
 
        // public string NombreDelArticulo
        // { 
@@ -51,25 +54,38 @@ namespace ShopList.Gui.ViewModels
 
         public ShopListViewModel()
         {
+            _database = new ShopListDatabase();
             Items = new ObservableCollection<Item>();
+            GetItems();
             CargarDatos();
+            if (Items.Count > 0)
+            {
+                ItemSelecionado = Items[0];
+            }
+            else             
+            {
+                ItemSelecionado = null;
+            }
+
             //AgregarShopListItemCommand = new Command(AgregarShopListItems);
         }
         [RelayCommand]
-        public void AgregarShopListItems()
+        public async void AgregarShopListItems()
         {
             if (string.IsNullOrEmpty(NombreDelArticulo)|| CantidadAComprar <= 0)
             {
                 return;
             }
-            Random generador = new Random();
+            //Random generador = new Random();
             var item = new Item
             {
-                Id = generador.Next(),
+                //Id = generador.Next(),
                 Nombre = NombreDelArticulo,
                 Cantidad = CantidadAComprar,
                 Comprado = false,
             };
+            await _database.SaveItemAsync(item);
+            GetItems();
             Items.Add(item);
             NombreDelArticulo = string.Empty;
             CantidadAComprar = 1;
@@ -84,6 +100,13 @@ namespace ShopList.Gui.ViewModels
                 Items.Remove(ItemSelecionado);
                 ItemSelecionado = null;
             }
+        }
+        private async void GetItems()
+        {
+
+            IEnumerable<Item> itemsFromDb = await _database.GetAllItemsAsync();
+            Items = new ObservableCollection<Item>(itemsFromDb);
+                        
         }
 
         private void CargarDatos()
